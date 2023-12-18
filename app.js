@@ -96,11 +96,87 @@ const dataframeData = [
     ]
   }
 ];
+// Consolidating the menu items in order to create the 
+// var valueData = [];
+// for (let i = 0; i< dataframeData.length;i++){
+//     for (let j = 0; j < dataframeData[i]['values'].length;j++){
+//         for (let k = 0; k < dataframeData[i]['values'][j].length;k++){
+//             if (dataframeData[i]['values'][j][k] === undefined){
+//                 continue
+//             }
+//         valueData.push(dataframeData[i]['values'][j][k]);
+//         }
+//     }
+// }
+const valueData = dataframeData.reduce((accumulator, dataframe) => {
+    // Concatenate values from each sublist into the accumulator, filtering out undefined values
+    return accumulator.concat(
+      dataframe.values.reduce((valuesAccumulator, sublist) => {
+        return valuesAccumulator.concat(sublist.filter(value => value !== undefined));
+      }, [])
+    );
+  }, []);
+//   console.log(valueData);
 
 // Select sections using D3
 const ordersSection = d3.select('#ordersSection');
 const buttonsSection = d3.select('#buttonsSection');
 const valuesSection = d3.select('#valuesSection');
+const difficultySection = d3.select('#difficultySection');
+const challengeSection = d3.select("#challengeSection")
+const timerSection = d3.select("#timerSection");
+
+// Create Timer Function
+
+// We will generate a random number by using Math.Random twice, once on the length of the valueData array and once more on the subarray
+
+// var randValueArray = Math.floor(Math.random() * valueData.length)
+function resetChallenge(){
+    challengeSection.html("")
+    updateOrdersSection(null,false)
+}
+function createTask(){
+    var easyDifficultyButton = difficultySection.select('#difficultyButton-ez');
+
+    if (!easyDifficultyButton.empty()){
+        easyDifficultyButton.on("click",function(){
+            resetChallenge()
+            var randMenuIndex = Math.floor(Math.random() * valueData.length);
+            console.log(randMenuIndex);
+            var randMenuItem = valueData[randMenuIndex]
+            console.log(randMenuItem)
+            challengeSection.append('p').attr("class",'intro').text('Easy: Find ' + randMenuItem)
+             // Set up event listener for the first correct order
+             function handleOrderClick(order) {
+                if (order === randMenuItem) {
+                    challengeSection.select('p').append('p').attr("class", 'intro').text('Great Job!');
+                    // Remove the event listener after success
+                    ordersSection.on('click', null);
+                }
+                else{
+                    challengeSection.select('p').append('p').attr("class", 'intro').text('Incorrect, Keep Trying!');
+                }
+            }
+
+            // Set up event listener for orders
+            valuesSection.on('click', function () {
+                // Get the clicked order (you might need to modify this based on your actual structure)
+                var clickedOrder = ordersData[ordersData.length-1];
+                handleOrderClick(clickedOrder);
+            });
+
+            // Set up a timeout for a certain waiting period (e.g., 30 seconds)
+            setTimeout(function () {
+                // Remove the event listener after the timeout
+                ordersSection.on('click', null);
+            }, 30000); // 30000 milliseconds = 30 seconds
+        });
+    }else{
+        console.error('Button with ID "difficultyButton-ez" not found');
+    }
+}
+createTask()
+// Reset Order Function
 
 function addResetButton(){
     ordersSection.append('button').attr("class",'button').text("Reset Order").on("click",function(){
@@ -122,7 +198,6 @@ function updateOrders() {
         .attr('class','orderData')
         .text(d => d);
   }
-    
 
 function updateOrdersSection(value,flag=false) {
     if (value == null){
@@ -184,7 +259,7 @@ function updateValues(columns, valuesData, startIndex = 0, endIndex = 7, step = 
         if (col == undefined){
             button.attr("class",'blank-space-button')
         }
-  
+
         // Initialize the visibleButtonIndices for each column
         visibleButtonIndices[colIndex] = 0;
       });
