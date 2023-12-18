@@ -12,15 +12,15 @@ body{
     background-color: gray;
     opacity: 0.6;
     padding: 10px 20px;
-    
     }
     
 .button{
     background-color: gray;
     color: white;
     opacity: 0.6;
-    padding: 10px 20px;
+    padding: 10px 10px;
     box-sizing: border-box;
+    border-radius: 5px;
 }
 
 .button:hover{
@@ -29,6 +29,7 @@ body{
 
 .button:active {
     background-color: gray;
+    color:white;
     box-shadow: 0 1px #666;
     transform: translateY(0.5px);
     
@@ -37,12 +38,14 @@ body{
     border:thin;
     border-color: white;
     opacity: 1;
+
 }
 .orders-section, .buttons-section, .values-section {
     /* border: 1px solid #ddd; */
     padding: 10px;
     margin: 10px;
     height: 25em;
+    
     }
 
 /* Set a fixed width for the orders and values sections */
@@ -61,13 +64,14 @@ body{
     grid-template-columns: repeat(3, 1fr);
     grid-gap: 10px; /* Adjust the gap between buttons as needed */
     /* justify-content: flex-start; */
-    background-color: rgb(83, 243, 243);
-    
+    background-color: whitesmoke;
+    border-radius: 5px;
     }
 
 .values-section-button{
     color: rgb(5, 5, 90);
-    background-color:rgb(241, 236, 226);
+    background-color:rgba(243, 230, 203, 0.861);
+    
 }
 .orderData{
     color: blue;
@@ -79,12 +83,21 @@ body{
     grid-gap: 5px;
     width: 125px; /* Set your desired width */
     padding: 10px;
-    box-sizing:content-box; Include padding in the width calculation
+    box-sizing:content-box; /* Include padding in the width calculation*/
     overflow-y: hidden;
     }
 
 .buttons-section-button{
     opacity: 1;
+    background-color: rgb(76, 75, 75);
+    border: 1px solid #ffffff;
+    border-radius: 5px;
+    margin-top: 0.5em;
+    
+}
+.buttons-section-button:hover{
+    background-color: whitesmoke;
+    color: darkblue;
 }
 /* Styling for scroll button */
 .scroll-button-down {
@@ -95,9 +108,6 @@ body{
     color: #ffffff; /* Set your desired text color for the scroll button */
     border: 1px solid #c0392b; /* Set your desired border color for the scroll button */
     cursor: pointer;
-    /* position:relative;
-    bottom:0%;
-    left: 50%;Set position to absolute for precise positioning */
     transform: translateX(30em);
     margin: 5px; /* Adjust the margin as needed */
     }
@@ -115,6 +125,7 @@ body{
 /* Style for the blank space button */
 .blank-space-button {
     visibility: hidden; /* Hide the blank space button by default */
+    padding: 10px 20px;
   }
 /* Display blank space buttons without spacing */
 .column-container .blank-space-button {

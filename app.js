@@ -31,48 +31,68 @@ const dataframeData = [
     ]
   },
   {
-    name: 'Dataframe 2',
-    columns: ['Column 2A', 'Column 2B', 'Column 2C'],
+    name: 'Lunch Specials',
+    columns: [undefined, 'BOATS', undefined,'MEAT',"SEAFOOD",undefined],
     values: [
-      ['Value 1A', 'Value 1B', 'Value 1C'],
-      ['Value 2A', 'Value 2B', 'Value 2C'],
-      ['Value 3A', 'Value 3B', 'Value 3C']
+      ['Steak Juli L','Filet Mignon L','Hib Chicken L','Hib Shrimp L','Hib Steak L','L Sushi Combo','Scallops L','Spcy Hib Ckn L'],
+      ['Boat Col Shrimp', 'Boat FM', 'Boat Spcl Steak','Boat Spcl Chick','Boat Spcl Salm'],
+      ['Lunch Duet','Pick Yaki L',undefined,undefined,'HCR 1 Serv','HBR 1 Serv','HSR 1 Serv'],
+      ['Steak Juli L','Hib Chicken L S','Hib Lem Ch L S','Filet Mignon LS','Hib Steak L S','Spcy Hib CH L S'],
+      ['Hib Shrimp L S','Scallops L S','L Sushi Combo S','Bwl Poke Salm','Bwl Poke Tuna'],
+      ['Lunch Duet S','Pick Yaki L S',undefined,undefined,"HCR 1 Serv S",'HBR 1 Serv S','HSR 1 Serv S']
     ]
   },
   {
-    name: 'Dataframe 3',
-    columns: ['Column 3A', 'Column 3B', 'Column 3C'],
+    name: 'Specialties',
+    columns: [undefined, undefined, undefined, "Hospitality"],
     values: [
-      ['Value 1A', 'Value 1B', 'Value 1C'],
-      ['Value 2A', 'Value 2B', 'Value 2C'],
-      ['Value 3A', 'Value 3B', 'Value 3C']
+      ['Beni Delight', 'Beni Excellence', 'Beni Special','Benihana Trio','Deluxe Treat','Emperors Feast','Hib Supreme',"Land 'N Sea"],
+      ['Ribeye', 'Ribeye & Ckn', 'Ribeye & Col Sh','Ribeye & Lob','Ribeye & Scal',"Rocky's Choice",'Samurai Treat','Splsh N Meadow'],
+      ['HCR 1 Serv','HBR 1 Serv','HSR 1 Serv',undefined,'Soup','Salad','Rice Bowl'],
+      ['Hosp Cali','Hosp Ch Shp RL','Hosp Eda','Hosp LV RL','Hosp Shr Crn RL','Hosp Spicy Tuna']
     ]
   },
   {
-    name: 'Dataframe 4',
-    columns: ['Column 1A', 'Column 1B', 'Column 1C'],
+    name: 'Meat/Seafood',
+    columns: ['MEAT', 'SEAFOOD', 'Misc.'],
     values: [
-      ['Value 1A', 'Value 1B', 'Value 1C'],
-      ['Value 2A', 'Value 2B', 'Value 2C'],
-      ['Value 3A', 'Value 3B', 'Value 3C']
+      ['Filet Mignon', 'Hib Chateaubrnd', 'Hibachi Chicken','Hibachi Steak','Ribeye','Spicy Hib Chk','Teriyaki Chk','Teriyaki Steak'],
+      ['Colossal Shrimp', 'Hibachi Scallop', 'Hibachi Shrimp','Hib Sal Avo Tar', 'Hib Tuna Steak','Ocean Treasure','Sp Hib Shrimp','Surf Side','Twin Lob Tails'],
+      ['HCR 1 Serv','HBR 1 Serv','HSR 1 Serv',undefined,undefined,undefined,undefined,'Soup','Salad','Rice Bowl']
     ]
   },
   {
-    name: 'Dataframe 5',
-    columns: ['Column 2A', 'Column 2B', 'Column 2C'],
+    name: 'Noodle/Tofu',
+    columns: ['UDON', 'TODU', undefined,'YAKISOBA','RAMEN',undefined],
     values: [
-      ['Value 1A', 'Value 1B', 'Value 1C'],
-      ['Value 2A', 'Value 2B', 'Value 2C'],
-      ['Value 3A', 'Value 3B', 'Value 3C']
+      ['Seafood Diablo'],
+      ['Spcy Tofu Steak'],
+      ['HCR 1 Serv','HBR 1 Serv','HSR 1 Serv'],
+      ['Yaki Chicken','Yaki Shrimp','Yaki Steak','Yaki Trio'],
+      ['RAMEN Chashu','RAMEN Sp Ch Gar','RAMEN Tonkotsu'],
+      ['Soup','Salad','Rice Bowl']
     ]
   },
   {
-    name: 'Dataframe 6',
-    columns: ['Column 3A', 'Column 3B', 'Column 3C'],
+    name: 'Apps/Side Order',
+    columns: ['SAL/VG/SP/NDL', 'TEMPURA', 'SAUTE','TEMP/NOODLE','SEAFOOD','SAUTE'],
     values: [
-      ['Value 1A', 'Value 1B', 'Value 1C'],
-      ['Value 2A', 'Value 2B', 'Value 2C'],
-      ['Value 3A', 'Value 3B', 'Value 3C']
+      ['Benihana Salad', 'Edamame', 'Edamame Spicy','Miso Soup','Onion Soup','Pick Seawed Sal','White Noodle','Yakisoba Appt'],
+      ['Calamari Temp', 'Chicken Temp', 'Scallop Tempura','Shrimp Tempura','Veg Tempura'],
+      ['Calamari Saute', 'Scallop Saute', 'Shrimp Saute','Veg Mix Saute','HBR 1 Serv','HCR 1 Serv','HSR 1 Serv'],
+      ['Calamari Temp S','Chicken Temp S','Scallop Temp S','Veg Tempura S','White Noodle S','Yakisoba Appt S'],
+      ['Calamari Ste S','Chili Pnz YTail','Sashimi Sampler','Seared Tuna','Soft Shell Crab','Sushi Sampler'],
+      ['Scallop Saute S','Shrimp Saute S','Veg Mix Saute S','HBR 1 Serv S','HCR 1 Serv S','HSR 1 Serv S']
+      
+    ]
+  },
+  {
+    name: 'Kabuki Kids',
+    columns: ['SIDES/ROLLS', 'MEAT/SEAFOOD', 'COMBINATIONS'],
+    values: [
+      ['Pick Kids Drinks','Soup','Salad' ,'Kid Cali Roll', 'Kid Edamame','Kid Noodle Side','Kid HCR 1 Serv','Kid HBR 1 Serv','Kid HSR 1 Serv'],
+      ['Kid Chicken', 'Kid Ckn Temp', 'Kid Ckn Tender','Kid FM', 'Kid Shrimp','Kid Steak'],
+      ['Kid FM & Ckn','Kid FM & Shrimp','Kid Ckn & Shr','Kid Ckn & Stk','Kid Stk & Shr']
     ]
   }
 ];
@@ -146,73 +166,10 @@ function updateButtons(dataframeData) {
   buttons.exit().remove();
 }
 
-
-
-
-// best working 
-// function updateValues(columns, valuesData, startindex=0,endindex=7) {
-//     // Clear the existing content
-//     valuesSection.html('');
-  
-//     // Display column names
-//     if (Array.isArray(columns)) {
-//         columns.forEach((col, colIndex) => {
-//         // Create a container for each column
-//         const columnContainer = valuesSection.append('div')
-//             .attr('class', 'column-container');
-
-//         // Add a button to the column container
-//         columnContainer.append('button')
-//             .attr('class', 'no-hover-button')
-//             .text(col);
-        
-//         // Initialize the visibleButtonIndices for each column
-//         visibleButtonIndices[colIndex] = 0;
-//         });
-//     }
-  
-//     // Display each value as a button corresponding to a column
-//     valuesData.forEach((list, colIndex) => {
-//     // Create a container for each column
-//     const columnContainer = valuesSection.select(`.column-container:nth-child(${colIndex + 1})`);
-
-//     // Determine the start and end indices for the current set of buttons
-//     const startIndex = startindex
-//     const endIndex = Math.min(startIndex + 7, list.length);
-
-//     // Add buttons to the column container
-//     for (let i = startIndex; i < endIndex; i++) {
-//       const value = list[i];
-//       const button = columnContainer.append('button').attr("class",'button')
-//         .text(value || '') // Ensure value is not undefined
-//         .on('click', function () {
-//           // Handle button click and update the orders section
-//           updateOrdersSection(value, true);
-//         })
-//         .classed(`column-${colIndex + 1}`, true) // Add a class indicating the column index
-//         .classed('blank-space-button', value === undefined);
-//     }
-
-//     // Update the visibleButtonIndices for each column
-//     visibleButtonIndices[colIndex] = endIndex;
-//     });
-
-//     // Add a separate scroll button if there are more buttons to show
-//     if (valuesData.some((list, colIndex) => visibleButtonIndices[colIndex] < list.length)) {
-//         const scrollButton = valuesSection.append('button')
-//         .text('Scroll')
-//         .classed('scroll-button', true)
-//         .on('click', function () {
-//             // Handle scroll button click by updating the visible set of buttons
-//             updateValues(columns, valuesData, startindex+7, endindex+7);
-//         });
-//   }
-// }
-
 function updateValues(columns, valuesData, startIndex = 0, endIndex = 7, step = 7) {
     // Clear the existing content
     valuesSection.html('');
-  
+    
     // Display column names
     if (Array.isArray(columns)) {
       columns.forEach((col, colIndex) => {
@@ -221,9 +178,12 @@ function updateValues(columns, valuesData, startIndex = 0, endIndex = 7, step = 
           .attr('class', 'column-container');
   
         // Add a button to the column container
-        columnContainer.append('button')
+        const button = columnContainer.append('button')
           .attr('class', 'no-hover-button')
           .text(col);
+        if (col == undefined){
+            button.attr("class",'blank-space-button')
+        }
   
         // Initialize the visibleButtonIndices for each column
         visibleButtonIndices[colIndex] = 0;
@@ -245,7 +205,7 @@ function updateValues(columns, valuesData, startIndex = 0, endIndex = 7, step = 
             updateOrdersSection(value, true);
           })
           .classed(`column-${colIndex + 1}`, true) // Add a class indicating the column index
-          .classed('blank-space-button', value === undefined);
+          .classed('blank-space-button', value === undefined | " ");
       }
   
       // Update the visibleButtonIndices for each column
