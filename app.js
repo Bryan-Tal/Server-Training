@@ -96,18 +96,7 @@ const dataframeData = [
     ]
   }
 ];
-// Consolidating the menu items in order to create the 
-// var valueData = [];
-// for (let i = 0; i< dataframeData.length;i++){
-//     for (let j = 0; j < dataframeData[i]['values'].length;j++){
-//         for (let k = 0; k < dataframeData[i]['values'][j].length;k++){
-//             if (dataframeData[i]['values'][j][k] === undefined){
-//                 continue
-//             }
-//         valueData.push(dataframeData[i]['values'][j][k]);
-//         }
-//     }
-// }
+
 const valueData = dataframeData.reduce((accumulator, dataframe) => {
     // Concatenate values from each sublist into the accumulator, filtering out undefined values
     return accumulator.concat(
@@ -116,7 +105,7 @@ const valueData = dataframeData.reduce((accumulator, dataframe) => {
       }, [])
     );
   }, []);
-//   console.log(valueData);
+
 
 // Select sections using D3
 const ordersSection = d3.select('#ordersSection');
@@ -129,12 +118,13 @@ const leaderboard = d3.select("#leaderboard")
 
 
 
-// We will generate a random number by using Math.Random twice, once on the length of the valueData array and once more on the subarray
 
 // var randValueArray = Math.floor(Math.random() * valueData.length)
 function resetChallenge(){
     challengeSection.html("")
     updateOrdersSection(null,false)
+    
+    
 }
 // Used to hold times for a leaderboard
 const leaderboardData = [];
@@ -147,12 +137,15 @@ easyDifficultyButton.on("click",function(){createTask('easy')})
 mediumDifficultyButton.on("click",function(){createTask('medium')})
 hardDifficultyButton.on("click",function(){createTask('hard')})
 
+let difficultyDictionary = {"easy":1,"medium":5,"hard":10}
 function createTask(difficulty) {
+    
     resetChallenge();
     const startTime = new Date().getTime(); // Record the start time
     var randMenuIndex = Math.floor(Math.random() * valueData.length);
     var randMenuItem = valueData[randMenuIndex];
-
+    var correctItemList = [];
+    var clickCounter = 0;
 
     switch (difficulty) {
         case 'easy':
@@ -161,7 +154,17 @@ function createTask(difficulty) {
             break;
         // Add cases for medium and hard here when needed
         case 'medium':
-            console.log("Do medium diff stuff here")
+            
+            var randMenuIndex = Math.floor(Math.random() * valueData.length);
+            var randMenuItem = valueData[randMenuIndex];
+            correctItemList.push(randMenuItem);
+            challengeSection.append('p').attr("class", 'intro').text('Medium: Find "' + randMenuItem + '",');
+            for (let i = 0; i < 4; i++){
+                var randMenuIndex = Math.floor(Math.random() * valueData.length);
+                var randMenuItem = valueData[randMenuIndex];
+                correctItemList.push(randMenuItem);
+                challengeSection.append('p').attr("class", 'intro').text('and "' + randMenuItem + '"\n');
+            }
             break;
         case 'hard':
             console.log("Do hard diff stuff here")
@@ -174,35 +177,111 @@ function createTask(difficulty) {
     // Set up event listener for orders
     valuesSection.on('click', function () {
         // Get the clicked order (you might need to modify this based on your actual structure)
-        var clickedOrder = ordersData[ordersData.length - 1];
-        handleOrderClick(clickedOrder, randMenuItem, difficulty,startTime);
+        var cleanedOrderData = ordersData.filter(value => value !== undefined);
+    
+        if (clickCounter >= difficultyDictionary[difficulty] - 1 &&  cleanedOrderData.length >= difficultyDictionary[difficulty]){
+        var clickedOrder = cleanedOrderData
+        
+        if (correctItemList.length > 0){
+            handleOrderClick(clickedOrder, correctItemList, difficulty,startTime,difficulty);
+        }else{
+            handleOrderClick(clickedOrder, randMenuItem, difficulty,startTime,difficulty);
+        }
+        }
+        clickCounter++;
+        
     });
 
 }
 
-function handleOrderClick(clickedOrder, correctOrder, difficulty,startTime) {
+function handleOrderClick(clickedOrder, correctOrder, difficulty,startTime, difficulty) {
     var taskCompleted = false; // Used to check if the task has been successfully completed
+    switch(difficulty){
+        case 'easy':
+            console.log(clickedOrder)
+            if (clickedOrder[0] === correctOrder) {
+                taskCompleted = true; // Mark the task as completed
+        
+                // Calculate the completion time
+                const endTime = new Date().getTime();
+                const completionTime = endTime - startTime;
+        
+                // Save the completion time in the local leaderboard array
+                leaderboardData.push({
+                    user: "Player", // You might want to use an actual user name
+                    difficultyLvl: difficulty,
+                    time: completionTime,
+                });
+        
+                // Display completion message
+                challengeSection.selectAll('p').remove('p')
+                if (challengeSection.selectAll('p').size() < 2){
+                challengeSection.append('p').attr("class", 'intro').text('Great Job! Creating New Easy Task...');
+                }
+        
+                setTimeout(function(){createTask(difficulty);},1000)
+                
+                // Display the local leaderboard
+                displayLeaderboard();
+            }else if (clickedOrder === undefined){
+                console.log("Scroll")
+            }else{
+                if (challengeSection.selectAll('p').size() < 2){
+                challengeSection.append('p').attr("class", 'intro').text('Incorrect, Try Again');
+                }
+                
+            }
+            break;
 
-    if (clickedOrder === correctOrder) {
-        taskCompleted = true; // Mark the task as completed
 
-        // Calculate the completion time
-        const endTime = new Date().getTime();
-        const completionTime = endTime - startTime;
+        case 'medium':
+            console.log(correctOrder)
+            var mismatch = false;
+            for (let i = 0; i < correctOrder.length; i++){
+                if (clickedOrder[i] != correctOrder[i]){
+                    taskCompleted = false;
+                    mismatch = true;
+                    challengeSection.selectAll('p').remove('p')
+                    challengeSection.append('p').attr("class", 'intro').text('Values did not match! Resetting...');
+                    setTimeout(function(){createTask(difficulty);},1000)
+                    
 
-        // Save the completion time in the local leaderboard array
-        leaderboardData.push({
-            user: "Player", // You might want to use an actual user name
-            difficultyLvl: difficulty,
-            time: completionTime,
-        });
-
-        // Display completion message
-        challengeSection.select('p').append('p').attr("class", 'intro').text('Great Job!');
-
-        // Display the local leaderboard
-        displayLeaderboard();
+                }
+            }
+            if (!mismatch){
+                
+                taskCompleted = true; // Mark the task as completed
+        
+                // Calculate the completion time
+                const endTime = new Date().getTime();
+                const completionTime = endTime - startTime;
+        
+                // Save the completion time in the local leaderboard array
+                leaderboardData.push({
+                    user: "Player", // You might want to use an actual user name
+                    difficultyLvl: difficulty,
+                    time: completionTime,
+                });
+        
+                // Display completion message
+                challengeSection.selectAll('p').remove('p')
+                if (challengeSection.selectAll('p').size() < 2){
+                challengeSection.append('p').attr("class", 'intro').text('Great Job! Creating New Medium Task...');
+                }
+        
+                setTimeout(function(){createTask(difficulty);},1000)
+                
+                // Display the local leaderboard
+                displayLeaderboard();
+            }
+            break;
+        case 'hard':
+            break;
+        default:
+            console.error('Invalid difficulty level:', difficulty);
+            return;
     }
+    
 }
 
 // Usage example:
@@ -261,7 +340,6 @@ function updateOrdersSection(value,flag=false) {
       ordersSection.html("")
       addResetButton()
       ordersData = [];
-      console.log(value.classList)
       if (value.classList.contains("scroll-button")){
           ordersData.push(" ");
         }else{

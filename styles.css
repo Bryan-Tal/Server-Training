@@ -108,7 +108,9 @@ body{
     color: #ffffff; /* Set your desired text color for the scroll button */
     border: 1px solid #c0392b; /* Set your desired border color for the scroll button */
     cursor: pointer;
-    transform: translateX(30em);
+    transform: translateX(24em);
+    max-height: 3em;
+    max-width: 7em;
     margin: 5px; /* Adjust the margin as needed */
     }
 .scroll-button-up {
