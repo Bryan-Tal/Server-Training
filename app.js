@@ -150,7 +150,7 @@ function createTask(difficulty) {
     switch (difficulty) {
         case 'easy':
             
-            challengeSection.append('p').attr("class", 'intro').text('Easy: Find "' + randMenuItem + '"');
+            challengeSection.append('p').attr("class", 'intro').text('Easy - Find "' + randMenuItem + '"');
             break;
         // Add cases for medium and hard here when needed
         case 'medium':
@@ -158,13 +158,27 @@ function createTask(difficulty) {
             var randMenuIndex = Math.floor(Math.random() * valueData.length);
             var randMenuItem = valueData[randMenuIndex];
             correctItemList.push(randMenuItem);
-            challengeSection.append('p').attr("class", 'intro').text('Medium: Find "' + randMenuItem + '",');
+            // challengeSection.append('p').attr("class", 'intro').text('Medium: Find "' + randMenuItem + '",');
+            // for (let i = 0; i < 4; i++){
+            //     var randMenuIndex = Math.floor(Math.random() * valueData.length);
+            //     var randMenuItem = valueData[randMenuIndex];
+            //     correctItemList.push(randMenuItem);
+            //     challengeSection.append('p').attr("class", 'intro').text('and "' + randMenuItem + '"\n');
+            // }
+            challengeSection.append('p').attr("class", 'intro').text('Medium - Find:' );
+
+            // Append the items as an unnumbered list
+            var list = challengeSection.append('ul').attr("class", 'intro');
+            list.append('li').text('"' + randMenuItem + '"');
             for (let i = 0; i < 4; i++){
                 var randMenuIndex = Math.floor(Math.random() * valueData.length);
                 var randMenuItem = valueData[randMenuIndex];
                 correctItemList.push(randMenuItem);
-                challengeSection.append('p').attr("class", 'intro').text('and "' + randMenuItem + '"\n');
+
+                // Append each item as a list item
+                list.append('li').text('"' + randMenuItem + '"');
             }
+
             break;
         case 'hard':
             console.log("Do hard diff stuff here")
@@ -242,7 +256,7 @@ function handleOrderClick(clickedOrder, correctOrder, difficulty,startTime, diff
                     taskCompleted = false;
                     mismatch = true;
                     challengeSection.selectAll('p').remove('p')
-                    challengeSection.append('p').attr("class", 'intro').text('Values did not match! Resetting...');
+                    challengeSection.append('p').attr("class", 'intro').text('Values did not match! Resetting Medium Task...');
                     setTimeout(function(){createTask(difficulty);},1000)
                     
 
