@@ -63,7 +63,7 @@ const dataframeData = [
   },
   {
     name: 'Noodle/Tofu',
-    columns: ['UDON', 'TODU', undefined,'YAKISOBA','RAMEN',undefined],
+    columns: ['UDON', 'TOFU', undefined,'YAKISOBA','RAMEN',undefined],
     values: [
       ['Seafood Diablo'],
       ['Spcy Tofu Steak'],
@@ -150,7 +150,7 @@ function createTask(difficulty) {
     switch (difficulty) {
         case 'easy':
             
-            challengeSection.append('p').attr("class", 'intro').text('Easy - Find "' + randMenuItem + '"');
+            challengeSection.append('p').attr("class", 'task').text('Easy - Find "' + randMenuItem + '"');
             break;
         // Add cases for medium and hard here when needed
         case 'medium':
@@ -165,10 +165,10 @@ function createTask(difficulty) {
             //     correctItemList.push(randMenuItem);
             //     challengeSection.append('p').attr("class", 'intro').text('and "' + randMenuItem + '"\n');
             // }
-            challengeSection.append('p').attr("class", 'intro').text('Medium - Find:' );
+            challengeSection.append('p').attr("class", 'task').text('Medium - Find:' );
 
             // Append the items as an unnumbered list
-            var list = challengeSection.append('ul').attr("class", 'intro');
+            var list = challengeSection.append('ul').attr("class", 'task listItem');
             list.append('li').text('"' + randMenuItem + '"');
             for (let i = 0; i < 4; i++){
                 var randMenuIndex = Math.floor(Math.random() * valueData.length);
@@ -213,7 +213,7 @@ function handleOrderClick(clickedOrder, correctOrder, difficulty,startTime, diff
     switch(difficulty){
         case 'easy':
             console.log(clickedOrder)
-            if (clickedOrder[0] === correctOrder) {
+            if (clickedOrder[clickedOrder.length-1] === correctOrder) {
                 taskCompleted = true; // Mark the task as completed
         
                 // Calculate the completion time
@@ -311,9 +311,9 @@ function displayLeaderboard() {
         sortedLeaderboard = sortedLeaderboard.slice(0,3)
     }
     // Display the leaderboard
-    leaderboard.append('p').attr("class", 'intro').text('Local Leaderboard:');
+    leaderboard.append('p').attr("class", 'leaderboard-data').text('Local Leaderboard:');
     sortedLeaderboard.forEach((entry, index) => {
-        leaderboard.append('p').attr("class", 'intro').text(`${index + 1}. ${entry.user} - ${entry.time/1000} seconds (${entry.difficultyLvl})`);
+        leaderboard.append('p').attr("class", 'leaderboard-data').text(`${index + 1}. ${entry.user} - ${entry.time/1000} seconds (${entry.difficultyLvl})`);
     });
 }
 

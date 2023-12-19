@@ -7,7 +7,13 @@ body{
 .pos-container {
     display: flex;
 }
-
+.task{
+    color:white;
+    transform: translateY(-0.5em);
+}
+.listItem{
+    transform: translateY(-1em);
+}
 .no-hover-button{
     background-color: gray;
     opacity: 0.6;
@@ -135,13 +141,17 @@ body{
   }
 .leaderboard {
     position:absolute;
-    bottom: 0;
-    right: 0;
+    bottom: 2%;
+    right: 2%;
     width: 15em;
     height: 10em;
     padding: 10px; /* Optional: Add padding for better appearance */
-    overflow-y: hidden;
+    overflow-y: scroll;
+    color:white;
     background-color: black; /* Optional: Set background color */
     border: 1px solid #ccc; /* Optional: Add a border */
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add a box shadow */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1)
+}
+.leaderboard-data{
+
 }
