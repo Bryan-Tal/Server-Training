@@ -125,8 +125,9 @@ const valuesSection = d3.select('#valuesSection');
 const difficultySection = d3.select('#difficultySection');
 const challengeSection = d3.select("#challengeSection")
 const timerSection = d3.select("#timerSection");
+const leaderboard = d3.select("#leaderboard")
 
-// Create Timer Function
+
 
 // We will generate a random number by using Math.Random twice, once on the length of the valueData array and once more on the subarray
 
@@ -135,48 +136,95 @@ function resetChallenge(){
     challengeSection.html("")
     updateOrdersSection(null,false)
 }
-function createTask(){
-    var easyDifficultyButton = difficultySection.select('#difficultyButton-ez');
+// Used to hold times for a leaderboard
+const leaderboardData = [];
 
-    if (!easyDifficultyButton.empty()){
-        easyDifficultyButton.on("click",function(){
-            resetChallenge()
-            var randMenuIndex = Math.floor(Math.random() * valueData.length);
-            console.log(randMenuIndex);
-            var randMenuItem = valueData[randMenuIndex]
-            console.log(randMenuItem)
-            challengeSection.append('p').attr("class",'intro').text('Easy: Find "' + randMenuItem + '"')
-             // Set up event listener for the first correct order
-             function handleOrderClick(order) {
-                if (order === randMenuItem) {
-                    challengeSection.select('p').append('p').attr("class", 'intro').text('Great Job!');
-                    // Remove the event listener after success
-                    ordersSection.on('click', null);
-                }
-                else{
-                    challengeSection.select('p').append('p').attr("class", 'intro').text('Incorrect, Keep Trying!');
-                }
-            }
+var easyDifficultyButton = difficultySection.select('#difficultyButton-easy');
+var mediumDifficultyButton = difficultySection.select('#difficultyButton-medium');
+var hardDifficultyButton = difficultySection.select('#difficultyButton-hard');
 
-            // Set up event listener for orders
-            valuesSection.on('click', function () {
-                // Get the clicked order (you might need to modify this based on your actual structure)
-                var clickedOrder = ordersData[ordersData.length-1];
-                handleOrderClick(clickedOrder);
-            });
+easyDifficultyButton.on("click",function(){createTask('easy')})
+mediumDifficultyButton.on("click",function(){createTask('medium')})
+hardDifficultyButton.on("click",function(){createTask('hard')})
 
-            // Set up a timeout for a certain waiting period (e.g., 30 seconds)
-            setTimeout(function () {
-                // Remove the event listener after the timeout
-                ordersSection.on('click', null);
-            }, 30000); // 30000 milliseconds = 30 seconds
+function createTask(difficulty) {
+    resetChallenge();
+    const startTime = new Date().getTime(); // Record the start time
+    var randMenuIndex = Math.floor(Math.random() * valueData.length);
+    var randMenuItem = valueData[randMenuIndex];
+
+
+    switch (difficulty) {
+        case 'easy':
+            
+            challengeSection.append('p').attr("class", 'intro').text('Easy: Find "' + randMenuItem + '"');
+            break;
+        // Add cases for medium and hard here when needed
+        case 'medium':
+            console.log("Do medium diff stuff here")
+            break;
+        case 'hard':
+            console.log("Do hard diff stuff here")
+            break;
+        default:
+            console.error('Invalid difficulty level:', difficulty);
+            return;
+    }
+
+    // Set up event listener for orders
+    valuesSection.on('click', function () {
+        // Get the clicked order (you might need to modify this based on your actual structure)
+        var clickedOrder = ordersData[ordersData.length - 1];
+        handleOrderClick(clickedOrder, randMenuItem, difficulty,startTime);
+    });
+
+}
+
+function handleOrderClick(clickedOrder, correctOrder, difficulty,startTime) {
+    var taskCompleted = false; // Used to check if the task has been successfully completed
+
+    if (clickedOrder === correctOrder) {
+        taskCompleted = true; // Mark the task as completed
+
+        // Calculate the completion time
+        const endTime = new Date().getTime();
+        const completionTime = endTime - startTime;
+
+        // Save the completion time in the local leaderboard array
+        leaderboardData.push({
+            user: "Player", // You might want to use an actual user name
+            difficultyLvl: difficulty,
+            time: completionTime,
         });
-    }else{
-        console.error('Button with ID "difficultyButton-ez" not found');
+
+        // Display completion message
+        challengeSection.select('p').append('p').attr("class", 'intro').text('Great Job!');
+
+        // Display the local leaderboard
+        displayLeaderboard();
     }
 }
-createTask()
-// Reset Order Function
+
+// Usage example:
+// createTask('easy'); // Triggering an easy task
+
+displayLeaderboard();
+
+function displayLeaderboard() {
+    leaderboard.html("")
+    // Sort the leaderboard data by time (ascending)
+    var sortedLeaderboard = leaderboardData.sort((a, b) => a.time - b.time);
+    if (sortedLeaderboard.length > 3){
+        sortedLeaderboard = sortedLeaderboard.slice(0,3)
+    }
+    // Display the leaderboard
+    leaderboard.append('p').attr("class", 'intro').text('Local Leaderboard:');
+    sortedLeaderboard.forEach((entry, index) => {
+        leaderboard.append('p').attr("class", 'intro').text(`${index + 1}. ${entry.user} - ${entry.time/1000} seconds (${entry.difficultyLvl})`);
+    });
+}
+
+
 
 function addResetButton(){
     ordersSection.append('button').attr("class",'button').text("Reset Order").on("click",function(){
@@ -222,6 +270,7 @@ function updateOrdersSection(value,flag=false) {
     }
     updateOrders();
 }
+
 // Function to update the buttons section
 function updateButtons(dataframeData) {
   const buttons = buttonsSection.selectAll('button')
@@ -280,7 +329,7 @@ function updateValues(columns, valuesData, startIndex = 0, endIndex = 7, step = 
             updateOrdersSection(value, true);
           })
           .classed(`column-${colIndex + 1}`, true) // Add a class indicating the column index
-          .classed('blank-space-button', value === undefined | " ");
+          .classed('blank-space-button', value === undefined || value === " ");
       }
   
       // Update the visibleButtonIndices for each column

@@ -131,3 +131,15 @@ body{
 .column-container .blank-space-button {
     margin-top: 1.15em;
   }
+.leaderboard {
+    position:absolute;
+    bottom: 0;
+    right: 0;
+    width: 15em;
+    height: 10em;
+    padding: 10px; /* Optional: Add padding for better appearance */
+    overflow-y: hidden;
+    background-color: black; /* Optional: Set background color */
+    border: 1px solid #ccc; /* Optional: Add a border */
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Optional: Add a box shadow */
+}
