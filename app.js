@@ -145,7 +145,7 @@ function createTask(){
             console.log(randMenuIndex);
             var randMenuItem = valueData[randMenuIndex]
             console.log(randMenuItem)
-            challengeSection.append('p').attr("class",'intro').text('Easy: Find ' + randMenuItem)
+            challengeSection.append('p').attr("class",'intro').text('Easy: Find "' + randMenuItem + '"')
              // Set up event listener for the first correct order
              function handleOrderClick(order) {
                 if (order === randMenuItem) {
