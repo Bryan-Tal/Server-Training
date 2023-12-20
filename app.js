@@ -1,7 +1,9 @@
 var width = 900
 var height = 800
 const visibleButtonIndices = {};
-
+let frameStack = [];
+let scrolled;
+let allColumns;
 var margin  = {
     top: 40,
     bottom: 40,
@@ -26,8 +28,7 @@ const dataframeData = [
     values: [
       ['HBR 1 Serv', 'HCR 1 Serv','HCR 1 Serv S','HSR 1 Serv','HSR 1 Serv S','Veg Fd Rice 1Sv','Vg Fd Rice1Sv S','Brown Rice 1 Sv','Brwn Rice 1Sv S','Steam Rice 1 Sv','Steam Rice 1 SvS','Sushi Rice 1 Sv','SushiRice 1Sv S'],
       ['HBR 2 Srv S','HCR 2 Srv S','HSR 2 Srv S','Ben S Rice 2 Sv','Brown Rice 2 Sv','Steam Rice 2 Sv'],
-      ['HBR 4 Srv S','HCR 4 Srv S','HSR 4 Srv S','VFR 4 Srv S'],
-      ['HCR 1 Serv','HCR 2 Srv S','HCR 4 Srv S']
+      ['HBR 4 Srv S','HCR 4 Srv S','HSR 4 Srv S','VFR 4 Srv S']
     ]
   },
   {
@@ -83,7 +84,6 @@ const dataframeData = [
       ['Calamari Temp S','Chicken Temp S','Scallop Temp S','Veg Tempura S','White Noodle S','Yakisoba Appt S'],
       ['Calamari Ste S','Chili Pnz YTail','Sashimi Sampler','Seared Tuna','Soft Shell Crab','Sushi Sampler'],
       ['Scallop Saute S','Shrimp Saute S','Veg Mix Saute S','HBR 1 Serv S','HCR 1 Serv S','HSR 1 Serv S']
-      
     ]
   },
   {
@@ -204,7 +204,7 @@ function handleOrderClick(clickedOrder, correctOrder, difficulty,startTime, diff
     var taskCompleted = false; // Used to check if the task has been successfully completed
     switch(difficulty){
         case 'easy':
-            console.log(clickedOrder)
+            // console.log(clickedOrder)
             if (clickedOrder[clickedOrder.length-1] === correctOrder) {
                 taskCompleted = true; // Mark the task as completed
         
@@ -319,7 +319,7 @@ addResetButton()
 // Initial update of orders, buttons, and values
 // updateOrders();
 updateButtons(dataframeData);
-updateValues(dataframeData[0]['columns'],dataframeData[0]['values']);
+updateValues(dataframeData[0]['columns'],dataframeData[0]['values'],0,7,7,3);
 
 // Function to update the orders section
 function updateOrders() {
@@ -373,71 +373,122 @@ function updateButtons(dataframeData) {
   buttons.exit().remove();
 }
 
-function updateValues(columns, valuesData, startIndex = 0, endIndex = 7, step = 7) {
-    // Clear the existing content
-    valuesSection.html('');
-    
-    // Display column names
-    if (Array.isArray(columns)) {
-      columns.forEach((col, colIndex) => {
-        // Create a container for each column
-        const columnContainer = valuesSection.append('div')
-          .attr('class', 'column-container');
-  
-        // Add a button to the column container
-        const button = columnContainer.append('button')
-          .attr('class', 'no-hover-button')
-          .text(col);
-        if (col == undefined){
-            button.remove('button')
-        }
+function updateValues(columns, valuesData, startIndex = 0, endIndex = 7, step = 7, columnStep = 3) {
+  // Clear the existing content
+  if (!scrolled){scrolled=false;}
+  valuesSection.html('');
+  let currentlyDisplayedValues = [];
+  let currentlyDisplayedColumns = [];
 
-        // Initialize the visibleButtonIndices for each column
-        visibleButtonIndices[colIndex] = 0;
-      });
-    }
-  
-    // Display each value as a button corresponding to a column
-    valuesData.forEach((list, colIndex) => {
+  // Display column names
+  if (Array.isArray(columns)) {
+    for (let i = 0; i < columnStep; i++) {
       // Create a container for each column
-      const columnContainer = valuesSection.select(`.column-container:nth-child(${colIndex + 1})`);
-  
-      // Add buttons to the column container
-      for (let i = startIndex; i < endIndex; i++) {
-        const value = list[i];
-        const button = columnContainer.append('button').attr("class",'button values-section-button')
-          .text(value || '') // Ensure value is not undefined
-          .on('click', function () {
-            // Handle button click and update the orders section
-            updateOrdersSection(value, true);
-          })
-          .classed(`column-${colIndex + 1}`, true) // Add a class indicating the column index
-          .classed('blank-space-button', value === undefined || value === " ");
+      const columnContainer = valuesSection.append('div')
+        .attr('class', 'column-container');
+
+      // Add a button to the column container
+      const button = columnContainer.append('button')
+        .attr('class', 'no-hover-button')
+        .text(columns[i]);
+      if (columns[i] == undefined) {
+        button.remove('button');
       }
-  
-      // Update the visibleButtonIndices for each column
-      visibleButtonIndices[colIndex] = endIndex;
-    });
-  
-    // Add a separate scroll up button if scrolling up is possible
-    if (startIndex >= step) {
-      const scrollUpButton = valuesSection.append('button')
-        .text('Scroll Up')
-        .classed('scroll-button-up', true)
-        .on('click', function () {
-          // Handle scroll up button click by updating the visible set of buttons
-          updateValues(columns, valuesData, startIndex - step, endIndex - step, step);
-        });
-    }
-  
-    // Add a separate scroll down button if there are more buttons to show
-    if (valuesData.some((list, colIndex) => visibleButtonIndices[colIndex] < list.length)) {
-      const scrollDownButton = valuesSection.append('button')
-        .text('Scroll Down')
-        .classed('scroll-button-down', true)
-        .on('click', function () {
-          // Handle scroll down button click by updating the visible set of buttons
-          updateValues(columns, valuesData, startIndex + step, endIndex + step, step);
-        });
+      currentlyDisplayedColumns.push(columns[i]);
+      // Initialize the visibleButtonIndices for each column
+      visibleButtonIndices[i] = 0;
     }
   }
+
+  // Display each value as a button corresponding to a column
+  let rValuesList = [];
+  let newValuesData = [];
+  valuesData.forEach((list, colIndex) => {
+    if (list.slice(0, step).length < list.length) {
+      rValuesList.push(list.slice(step, list.length))
+    } else if (colIndex > 2) {
+      // console.log(list) 
+      rValuesList.push(list)
+    } else {
+      console.log("Hello")
+    }
+    const columnContainer = valuesSection.select(`.column-container:nth-child(${colIndex + 1})`);
+    if (columnContainer.empty()) {
+      return; // Skip columns with no data
+    }
+    for (let i = startIndex; i < endIndex; i++) {
+      const value = list[i];
+      currentlyDisplayedValues.push(list[i]);
+
+      const button = columnContainer.append('button')
+        .attr('class', 'button values-section-button')
+        .text(value || '') // Ensure value is not undefined
+        .on('click', function () {
+          // Handle button click and update the orders section
+          updateOrdersSection(value, true);
+        })
+        .classed(`column-${colIndex + 1}`, true) // Add a class indicating the column index
+        .classed('blank-space-button', value === undefined || value === " ");
+    }
+    newValuesData.push(list);
+    // Update the visibleButtonIndices for each column
+    visibleButtonIndices[colIndex] = endIndex;
+  });
+
+  // Add a separate scroll down button if there are more columns to show
+  if (columns.length > columnStep || valuesData.some((list, colIndex) => visibleButtonIndices[colIndex] < list.length)) {
+    const scrollDownButton = valuesSection.append('button')
+      .text('Scroll Right')
+      .classed('scroll-button-down', true)
+      .on('click', function () {
+        // Filter columns to include only those that haven't been displayed or have values yet to be displayed
+        const remainingColumns = columns.filter((col, colIndex) => {
+          const isDisplayed = currentlyDisplayedColumns.includes(col); // Check if the column is already displayed
+          const hasData = valuesData[colIndex].slice(startIndex, endIndex).some(value => value !== undefined && value !== " ");
+
+          console.log(`Column: ${col}, isDisplayed: ${isDisplayed}, hasData: ${hasData}, visibleButtonIndices: ${visibleButtonIndices[colIndex]}`);
+
+          return !isDisplayed || (!hasData || visibleButtonIndices[colIndex] < valuesData[colIndex].length);
+        });
+
+        console.log("Remaining Columns: ", remainingColumns);
+        // let placeHolder = [];
+        // newValuesData = [];
+        // for (let i = 1; i<=currentlyDisplayedValues.length; i++){
+        //   placeHolder.push(currentlyDisplayedValues[i])
+        //   if (i % step == 0 || currentlyDisplayedValues == undefined){
+        //     mult = i / step; // 
+        //     newValuesData.push(placeHolder);
+        //     placeHolder = [];
+        //   }
+        // }
+        // console.log("New Data:",newValuesData)
+
+        // Push the current frame to the stack
+        frameStack.push({
+          name: 'df1', // replace with actual name
+          columns: currentlyDisplayedColumns.slice(),
+          values: newValuesData.slice()
+        });
+        // Handle scroll right button click by updating the visible set of columns
+        scrolled=true;
+        console.log(frameStack.columns)
+        updateValues(remainingColumns, rValuesList, startIndex, endIndex, step, columnStep);
+      });
+  }
+  console.log(rValuesList)
+  // Add a separate scroll up button if scrolling left is possible
+  if (scrolled==true) {
+    const scrollUpButton = valuesSection.append('button')
+      .text('Scroll Left')
+      .classed('scroll-button-up', true)
+      .on('click', function () {
+        // Pop the previous frame from the stack
+        const previousFrame = frameStack.pop();
+        scrolled = false;
+        if (previousFrame) {
+          updateValues(previousFrame.columns, previousFrame.values, startIndex, endIndex, step, columnStep);
+        }
+      });
+  }
+}
