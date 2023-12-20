@@ -389,7 +389,8 @@ function updateValues(columns, valuesData, startIndex = 0, endIndex = 7, step = 
           .attr('class', 'no-hover-button')
           .text(col);
         if (col == undefined){
-            button.attr("class",'blank-space-button')
+            button.remove('button')
+            // button.attr("class",'blank-space-button')
         }
 
         // Initialize the visibleButtonIndices for each column
