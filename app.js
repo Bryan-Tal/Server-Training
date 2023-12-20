@@ -97,7 +97,7 @@ const dataframeData = [
   }
 ];
 
-const valueData = dataframeData.reduce((accumulator, dataframe) => {
+const allMenuData = dataframeData.reduce((accumulator, dataframe) => {
     // Concatenate values from each sublist into the accumulator, filtering out undefined values
     return accumulator.concat(
       dataframe.values.reduce((valuesAccumulator, sublist) => {
@@ -119,7 +119,7 @@ const leaderboard = d3.select("#leaderboard")
 
 
 
-// var randValueArray = Math.floor(Math.random() * valueData.length)
+// var randValueArray = Math.floor(Math.random() * allMenuData.length)
 function resetChallenge(){
     challengeSection.html("")
     updateOrdersSection(null,false)
@@ -142,8 +142,8 @@ function createTask(difficulty) {
     
     resetChallenge();
     const startTime = new Date().getTime(); // Record the start time
-    var randMenuIndex = Math.floor(Math.random() * valueData.length);
-    var randMenuItem = valueData[randMenuIndex];
+    var randMenuIndex = Math.floor(Math.random() * allMenuData.length);
+    var randMenuItem = allMenuData[randMenuIndex];
     var correctItemList = [];
     var clickCounter = 0;
 
@@ -155,26 +155,18 @@ function createTask(difficulty) {
         // Add cases for medium and hard here when needed
         case 'medium':
             
-            var randMenuIndex = Math.floor(Math.random() * valueData.length);
-            var randMenuItem = valueData[randMenuIndex];
+            var randMenuIndex = Math.floor(Math.random() * allMenuData.length);
+            var randMenuItem = allMenuData[randMenuIndex];
             correctItemList.push(randMenuItem);
-            // challengeSection.append('p').attr("class", 'intro').text('Medium: Find "' + randMenuItem + '",');
-            // for (let i = 0; i < 4; i++){
-            //     var randMenuIndex = Math.floor(Math.random() * valueData.length);
-            //     var randMenuItem = valueData[randMenuIndex];
-            //     correctItemList.push(randMenuItem);
-            //     challengeSection.append('p').attr("class", 'intro').text('and "' + randMenuItem + '"\n');
-            // }
             challengeSection.append('p').attr("class", 'task').text('Medium - Find:' );
 
             // Append the items as an unnumbered list
             var list = challengeSection.append('ul').attr("class", 'task listItem');
             list.append('li').text('"' + randMenuItem + '"');
             for (let i = 0; i < 4; i++){
-                var randMenuIndex = Math.floor(Math.random() * valueData.length);
-                var randMenuItem = valueData[randMenuIndex];
+                var randMenuIndex = Math.floor(Math.random() * allMenuData.length);
+                var randMenuItem = allMenuData[randMenuIndex];
                 correctItemList.push(randMenuItem);
-
                 // Append each item as a list item
                 list.append('li').text('"' + randMenuItem + '"');
             }
@@ -255,11 +247,6 @@ function handleOrderClick(clickedOrder, correctOrder, difficulty,startTime, diff
                 if (clickedOrder[i] != correctOrder[i]){
                     taskCompleted = false;
                     mismatch = true;
-                    challengeSection.selectAll('p').remove('p')
-                    challengeSection.append('p').attr("class", 'intro').text('Values did not match! Resetting Medium Task...');
-                    setTimeout(function(){createTask(difficulty);},1000)
-                    
-
                 }
             }
             if (!mismatch){
@@ -287,6 +274,10 @@ function handleOrderClick(clickedOrder, correctOrder, difficulty,startTime, diff
                 
                 // Display the local leaderboard
                 displayLeaderboard();
+            }else{
+                challengeSection.select('ul').remove('ul')
+                challengeSection.append('p').attr("class", 'intro').text('Values did not match! Resetting Medium Task...');
+                setTimeout(function(){createTask(difficulty);},1000)
             }
             break;
         case 'hard':

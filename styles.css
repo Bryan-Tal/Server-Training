@@ -153,5 +153,6 @@ body{
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1)
 }
 .leaderboard-data{
-
+    font-family:  Oxygen, 'Ubuntu', 'Cantarell', 'Open Sans', 'Helvetica Neue', sans-serif;
+    font-size: 14px;
 }
