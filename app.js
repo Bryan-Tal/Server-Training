@@ -54,7 +54,7 @@ const dataframeData = [
   },
   {
     name: 'Meat/Seafood',
-    columns: ['MEAT', 'SEAFOOD', 'Misc.'],
+    columns: ['MEAT', 'SEAFOOD', undefined],
     values: [
       ['Filet Mignon', 'Hib Chateaubrnd', 'Hibachi Chicken','Hibachi Steak','Ribeye','Spicy Hib Chk','Teriyaki Chk','Teriyaki Steak'],
       ['Colossal Shrimp', 'Hibachi Scallop', 'Hibachi Shrimp','Hib Sal Avo Tar', 'Hib Tuna Steak','Ocean Treasure','Sp Hib Shrimp','Surf Side','Twin Lob Tails'],
@@ -90,9 +90,9 @@ const dataframeData = [
     name: 'Kabuki Kids',
     columns: ['SIDES/ROLLS', 'MEAT/SEAFOOD', 'COMBINATIONS'],
     values: [
-      ['Pick Kids Drinks','Soup','Salad' ,'Kid Cali Roll', 'Kid Edamame','Kid Noodle Side','Kid HCR 1 Serv','Kid HBR 1 Serv','Kid HSR 1 Serv'],
-      ['Kid Chicken', 'Kid Ckn Temp', 'Kid Ckn Tender','Kid FM', 'Kid Shrimp','Kid Steak'],
-      ['Kid FM & Ckn','Kid FM & Shrimp','Kid Ckn & Shr','Kid Ckn & Stk','Kid Stk & Shr']
+      ['Pick Kids Drinks','Kid Cali Roll', 'Kid Edamame','Kid Noodle Side','Kid HCR 1 Serv','Kid HBR 1 Serv','Kid HSR 1 Serv'],
+      ['Soup','Kid Chicken', 'Kid Ckn Temp', 'Kid Ckn Tender','Kid FM', 'Kid Shrimp','Kid Steak'],
+      ['Salad','Kid FM & Ckn','Kid FM & Shrimp','Kid Ckn & Shr','Kid Ckn & Stk','Kid Stk & Shr']
     ]
   }
 ];
@@ -389,7 +389,7 @@ function updateValues(columns, valuesData, startIndex = 0, endIndex = 7, step = 
           .attr('class', 'no-hover-button')
           .text(col);
         if (col == undefined){
-            button.attr("class",'blank-space-button')
+            button.remove('button')
         }
 
         // Initialize the visibleButtonIndices for each column

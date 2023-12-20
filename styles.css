@@ -14,11 +14,7 @@ body{
 .listItem{
     transform: translateY(-1em);
 }
-.no-hover-button{
-    background-color: gray;
-    opacity: 0.6;
-    padding: 10px 20px;
-    }
+
     
 .button{
     background-color: gray;
@@ -27,8 +23,9 @@ body{
     padding: 10px 10px;
     box-sizing: border-box;
     border-radius: 5px;
+    max-width: 20em;
+    max-height: 10em;
 }
-
 .button:hover{
     opacity: 1;
 }
@@ -38,26 +35,44 @@ body{
     color:white;
     box-shadow: 0 1px #666;
     transform: translateY(0.5px);
-    
 }
+
+.no-hover-button{
+    box-sizing: border-box;
+    border-radius: 5px;
+    background-color: gray;
+    opacity: 0.6;
+    padding: 10px 10px;
+    max-width: 20em;
+    max-height: 10em;
+
+}
+
+/* Style for the blank space button */
+.blank-space-button {
+    visibility: hidden; /* Hide the blank space button by default */
+    padding: 17px 10px;
+    max-width: 20em;
+    max-height: 10em;
+  }
+
 .buttons-section{
     border:thin;
     border-color: white;
     opacity: 1;
-
 }
 .orders-section, .buttons-section, .values-section {
     /* border: 1px solid #ddd; */
     padding: 10px;
     margin: 10px;
-    height: 25em;
-    
+    height: 24.5em;
     }
 
 /* Set a fixed width for the orders and values sections */
 .orders-section, .values-section {
     flex: 1;
-    overflow-y: scroll;
+    /* change to hidden */
+    overflow-y: scroll;  
     background-color: rgb(241, 236, 226);
     }
 .column-container {
@@ -71,16 +86,19 @@ body{
     grid-gap: 10px; /* Adjust the gap between buttons as needed */
     /* justify-content: flex-start; */
     background-color: whitesmoke;
-    border-radius: 5px;
+    /* border-radius: 5px; */
     }
 
 .values-section-button{
     color: rgb(5, 5, 90);
     background-color:rgba(243, 230, 203, 0.861);
-    
+    max-width: 20em;
+    max-height: 10em;
 }
 .orderData{
     color: blue;
+    font-family: 'Courier New', Courier, monospace;
+    /* letter-spacing: 1px; */
 }
 
 /* Adjust the width of the buttons section */
@@ -99,7 +117,6 @@ body{
     border: 1px solid #ffffff;
     border-radius: 5px;
     margin-top: 0.5em;
-    
 }
 .buttons-section-button:hover{
     background-color: whitesmoke;
@@ -128,25 +145,21 @@ body{
     border: 1px solid #c0392b; /* Set your desired border color for the scroll button */
     cursor: pointer;
     margin: 5px; /* Adjust the margin as needed */
+    max-height: 3em;
+    max-width: 7em;
     }
 
-/* Style for the blank space button */
-.blank-space-button {
-    visibility: hidden; /* Hide the blank space button by default */
-    padding: 10px 20px;
-  }
-/* Display blank space buttons without spacing */
-.column-container .blank-space-button {
-    margin-top: 1.15em;
-  }
+
+
 .leaderboard {
     position:absolute;
     bottom: 2%;
     right: 2%;
     width: 15em;
-    height: 10em;
-    padding: 10px; /* Optional: Add padding for better appearance */
-    overflow-y: scroll;
+    height: 12em;
+    padding: 10px 10px; /* Optional: Add padding for better appearance */
+    overflow-y: hidden;
+    text-align-last: left;
     color:white;
     background-color: black; /* Optional: Set background color */
     border: 1px solid #ccc; /* Optional: Add a border */
