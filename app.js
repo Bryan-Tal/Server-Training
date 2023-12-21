@@ -1,8 +1,12 @@
 var width = 900
 var height = 800
 const visibleButtonIndices = {};
-let frameStack = [];
-let scrolled;
+let upScrollStack = []; // scroll left
+let downScrollStack = []; //scroll right
+let currentFrameStack = [];
+let temp = [];
+let inStack = false;
+let scrolled = false;
 let allColumns;
 var margin  = {
     top: 40,
@@ -16,6 +20,11 @@ var viewport = {
     height: 150
 }
 
+function resetStack(){
+  upScrollStack = [];
+  downScrollStack = [];
+  currentFrameStack = [];
+}
 // Idea: make 3 SVG Canvases in order to hold all the buttons
 
 // Sample data for orders, buttons, and values
@@ -76,7 +85,7 @@ const dataframeData = [
   },
   {
     name: 'Apps/Side Order',
-    columns: ['SAL/VG/SP/NDL', 'TEMPURA', 'SAUTE','TEMP/NOODLE','SEAFOOD','SAUTE'],
+    columns: ['SAL/VG/SP/NDL', 'TEMPURA', 'SAUTE','TEMP/NOODLE','SEAFOOD','SAUTÈ'],
     values: [
       ['Benihana Salad', 'Edamame', 'Edamame Spicy','Miso Soup','Onion Soup','Pick Seawed Sal','White Noodle','Yakisoba Appt'],
       ['Calamari Temp', 'Chicken Temp', 'Scallop Tempura','Shrimp Tempura','Veg Tempura'],
@@ -356,6 +365,7 @@ function updateOrdersSection(value,flag=false) {
 
 // Function to update the buttons section
 function updateButtons(dataframeData) {
+  
   const buttons = buttonsSection.selectAll('button')
     .data(dataframeData);
 
@@ -365,7 +375,7 @@ function updateButtons(dataframeData) {
 
     .text(d => d.name)
     .on('click', function (pointerEvent, dataframe) {
-        
+      resetStack();
       // On button click, update the values section with the columns and values of the selected dataframe
       updateValues(dataframe.columns, dataframe.values);
     });
@@ -401,16 +411,14 @@ function updateValues(columns, valuesData, startIndex = 0, endIndex = 7, step = 
   }
 
   // Display each value as a button corresponding to a column
-  let rValuesList = [];
+  let rValuesList = []; // will hold remaining values - values yet to be displayed.
   let newValuesData = [];
+
   valuesData.forEach((list, colIndex) => {
     if (list.slice(0, step).length < list.length) {
       rValuesList.push(list.slice(step, list.length))
     } else if (colIndex > 2) {
-      // console.log(list) 
       rValuesList.push(list)
-    } else {
-      console.log("Hello")
     }
     const columnContainer = valuesSection.select(`.column-container:nth-child(${colIndex + 1})`);
     if (columnContainer.empty()) {
@@ -432,60 +440,93 @@ function updateValues(columns, valuesData, startIndex = 0, endIndex = 7, step = 
     }
     newValuesData.push(list);
     // Update the visibleButtonIndices for each column
-    visibleButtonIndices[colIndex] = endIndex;
+    visibleButtonIndices[colIndex] += endIndex - startIndex;
   });
 
-  // Add a separate scroll down button if there are more columns to show
-  if (columns.length > columnStep || valuesData.some((list, colIndex) => visibleButtonIndices[colIndex] < list.length)) {
+  // console.log("Remaining Values: ",rValuesList);
+  // console.log("Values to Save to stack: ",newValuesData);
+
+  console.log("Down Stack (Next Values): ", downScrollStack);
+  console.log("Up Stack (Prev. Values): ", upScrollStack);
+  console.log("Current Frame Stack: ", currentFrameStack);
+  
+// Best working scroll
+  // // Add a separate scroll down button if there are more columns to show
+  if (columns.length > columnStep || valuesData.some((list, colIndex) => visibleButtonIndices[colIndex] < list.length) ) {
+    if (rValuesList.length == 0){scrolled=false;}
     const scrollDownButton = valuesSection.append('button')
-      .text('Scroll Right')
+      .text('Scroll Down')
       .classed('scroll-button-down', true)
       .on('click', function () {
+        
         // Filter columns to include only those that haven't been displayed or have values yet to be displayed
         const remainingColumns = columns.filter((col, colIndex) => {
+          
           const isDisplayed = currentlyDisplayedColumns.includes(col); // Check if the column is already displayed
           const hasData = valuesData[colIndex].slice(startIndex, endIndex).some(value => value !== undefined && value !== " ");
 
           console.log(`Column: ${col}, isDisplayed: ${isDisplayed}, hasData: ${hasData}, visibleButtonIndices: ${visibleButtonIndices[colIndex]}`);
-
-          return !isDisplayed || (!hasData || visibleButtonIndices[colIndex] < valuesData[colIndex].length);
+          if (scrolled){return ((isDisplayed || (hasData)) && ((visibleButtonIndices[colIndex] < valuesData[colIndex].length) || visibleButtonIndices[colIndex] == undefined));}
+          return ((!isDisplayed || (hasData)) && ((visibleButtonIndices[colIndex] < valuesData[colIndex].length) || visibleButtonIndices[colIndex] == undefined));
         });
-
-        console.log("Remaining Columns: ", remainingColumns);
-        // let placeHolder = [];
-        // newValuesData = [];
-        // for (let i = 1; i<=currentlyDisplayedValues.length; i++){
-        //   placeHolder.push(currentlyDisplayedValues[i])
-        //   if (i % step == 0 || currentlyDisplayedValues == undefined){
-        //     mult = i / step; // 
-        //     newValuesData.push(placeHolder);
-        //     placeHolder = [];
-        //   }
-        // }
-        // console.log("New Data:",newValuesData)
-
-        // Push the current frame to the stack
-        frameStack.push({
+        
+        
+        // console.log("Remaining Columns: ", remainingColumns);
+        
+        // push the current frame to the "scroll up" stack so we have something to return to
+        if(downScrollStack.length == 0 ){
+        currentFrameStack.push({
           name: 'df1', // replace with actual name
           columns: currentlyDisplayedColumns.slice(),
           values: newValuesData.slice()
         });
-        // Handle scroll right button click by updating the visible set of columns
-        scrolled=true;
-        console.log(frameStack.columns)
-        updateValues(remainingColumns, rValuesList, startIndex, endIndex, step, columnStep);
+      }
+      
+      if (downScrollStack.length >= 1 && upScrollStack.length == 0){ /* at the beginning of the stack, but with information about next */ 
+        // upScrollStack.push(downScrollStack.pop());currentFrameStack.push(upScrollStack.pop());
+        upScrollStack.push(currentFrameStack.pop());
+        currentFrameStack.push(downScrollStack.pop());
+        console.log("ooooo")
+      }
+
+        // push next screen to "scroll down" stack 
+        downScrollStack.push({
+          name: 'df1', // replace with actual name
+          columns: remainingColumns.slice(),
+          values: rValuesList.slice()
+        })
+        const currentFrame = downScrollStack.pop();
+        
+        // Change scrolled value in order to enable left clicking
+        scrolled = true;
+        upScrollStack.push(currentFrameStack.pop());
+        currentFrameStack.push(currentFrame);
+        // scroll
+        updateValues(currentFrame.columns, currentFrame.values, startIndex, endIndex, step, columnStep);
       });
   }
-  console.log(rValuesList)
+
+  // Scroll Up 
+  console.log("Can Scroll Left? ", scrolled)
   // Add a separate scroll up button if scrolling left is possible
-  if (scrolled==true) {
+  if (upScrollStack.length == 0) scrolled = false;
+  if (scrolled) {
     const scrollUpButton = valuesSection.append('button')
-      .text('Scroll Left')
+      .text('Scroll Up')
       .classed('scroll-button-up', true)
       .on('click', function () {
         // Pop the previous frame from the stack
-        const previousFrame = frameStack.pop();
-        scrolled = false;
+        // const currentFrame = down
+        const previousFrame = upScrollStack.pop();
+        if (previousFrame){
+          
+        }
+        downScrollStack.push(currentFrameStack.pop())
+        const currentFrame = currentFrameStack.push(previousFrame);
+        
+        
+        if (upScrollStack.length == 0){
+        scrolled = false;inStack = false;}
         if (previousFrame) {
           updateValues(previousFrame.columns, previousFrame.values, startIndex, endIndex, step, columnStep);
         }
